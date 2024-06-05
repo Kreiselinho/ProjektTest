@@ -1,16 +1,51 @@
 let austriaBounds = [[46.372276, 9.530952], [49.020608, 17.160776]]; // Bounding box for Austria
-let mapCenter = [47.267222, 11.392778]; // Center the map on Innsbruck
+let mapCenter = [48.245556, 12.522778]; // Center the map on Mühldorf am Inn, damit Hohe Tauern zentral ist und Popup sichtbar ist
 let initialZoom = 7;
 
 // Liste der Nationalparks in Österreich
 let nationalParks = [
-    { name: "Nationalpark Hohe Tauern", lat: 47.121201, lng: 12.713109 },
-    { name: "Nationalpark Neusiedler See - Seewinkel", lat: 47.773514, lng: 16.769231 },
-    { name: "Nationalpark Gesäuse", lat: 47.569953, lng: 14.615875 },
-    { name: "Nationalpark Thayatal", lat: 48.859317, lng: 15.898437 },
-    { name: "Nationalpark Kalkalpen", lat: 47.805639, lng: 14.307364 },
-    { name: "Nationalpark Donau-Auen", lat: 48.155263, lng: 16.816245 },
-    { name: "Nationalpark Hohe Wand", lat: 47.825059, lng: 16.056765 }
+    {
+        name: "Nationalpark Hohe Tauern",
+        lat: 47.121201,
+        lng: 12.713109,
+        image: "images/hohetauern.jpg",
+        credit: "@WeAppU https://pixabay.com/de/photos/maltatal-malta-stausee-kraftwerk-578207/"
+    },
+    {
+        name: "Nationalpark Neusiedler See - Seewinkel",
+        lat: 47.773514,
+        lng: 16.769231,
+        image: "https://upload.wikimedia.org/wikipedia/commons/3/3d/Neusiedler_See_-_Seewinkel.jpg",
+        credit: "By Thomas Ledl - Own work, CC BY-SA 3.0, https://commons.wikimedia.org/w/index.php?curid=20408732"
+    },
+    {
+        name: "Nationalpark Gesäuse",
+        lat: 47.569953,
+        lng: 14.615875,
+        image: "https://upload.wikimedia.org/wikipedia/commons/8/8e/Ges%C3%A4use_Johnsbach_01.jpg",
+        credit: "By Uoaei1 - Own work, CC BY-SA 3.0, https://commons.wikimedia.org/w/index.php?curid=31282630"
+    },
+    {
+        name: "Nationalpark Thayatal",
+        lat: 48.859317,
+        lng: 15.898437,
+        image: "https://upload.wikimedia.org/wikipedia/commons/5/5b/Thayatal_2008_PD_018.JPG",
+        credit: "By Petr Dlouhý - Own work, CC BY-SA 3.0, https://commons.wikimedia.org/w/index.php?curid=5261295"
+    },
+    {
+        name: "Nationalpark Kalkalpen",
+        lat: 47.805639,
+        lng: 14.307364,
+        image: "https://upload.wikimedia.org/wikipedia/commons/2/2d/Kalkalpen_01.jpg",
+        credit: "By Peter Gugerell - Own work, CC0, https://commons.wikimedia.org/w/index.php?curid=34192072"
+    },
+    {
+        name: "Nationalpark Donau-Auen",
+        lat: 48.155263,
+        lng: 16.816245,
+        image: "https://upload.wikimedia.org/wikipedia/commons/1/15/Donau_Auen_Nationalpark.jpg",
+        credit: "By GuentherZ - Own work, CC BY-SA 4.0, https://commons.wikimedia.org/w/index.php?curid=47158696"
+    }
 ];
 
 // Karte initialisieren
@@ -148,11 +183,18 @@ async function loadWind(url) {
     `;
 }
 
-// Beispielhafte Winddaten für Österreich laden (URL anpassen)
+// Beispielhafte Winddaten laden
 loadWind("https://geographie.uibk.ac.at/data/ecmwf/data/wind-10u-10v-europe.json");
 
 // Nationalparks Marker hinzufügen
 nationalParks.forEach(park => {
     let marker = L.marker([park.lat, park.lng]).addTo(themaLayer.parks);
-    marker.bindPopup(`<b>${park.name}</b>`);
+    let popupContent = `
+        <div class="popup-content">
+            <h4>${park.name}</h4>
+            <img src="${park.image}" alt="${park.name}" style="width:100%;"><br>
+            <small>Bildnachweis: <a href="${park.credit.split(', ')[2]}" target="_blank">${park.credit}</a></small>
+        </div>
+    `;
+    marker.bindPopup(popupContent);
 });

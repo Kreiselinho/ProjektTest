@@ -50,3 +50,6 @@ footer {
 footer nav {
     display: inline-block;
 }
+.popupContent h4 {
+    margin-bottom: 10px;
+}
