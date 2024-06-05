@@ -28,6 +28,22 @@ L.control.scale({
     imperial: false,
 }).addTo(map);
 
+// Leaflet Search Control
+let searchControl = new L.Control.Search({
+    url: 'https://nominatim.openstreetmap.org/search?format=json&q={s}',
+    jsonpParam: 'json_callback',
+    propertyName: 'display_name',
+    propertyLoc: ['lat', 'lon'],
+    marker: L.marker([0,0]),
+    autoCollapse: true,
+    autoType: false,
+    minLength: 2,
+    moveToLocation: function(latlng, title, map) {
+        map.setView(latlng, initialZoom);
+        showForecast(latlng.lat, latlng.lng);
+    }
+}).addTo(map);
+
 // Wettervorhersage MET Norway
 async function showForecast(lat, lon) {
     let url = `https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=${lat}&lon=${lon}`;
@@ -53,10 +69,14 @@ async function showForecast(lat, lon) {
                 <li>Windgeschwindigkeit (km/h): ${Math.round(details.wind_speed * 3.6)}</li>
             </ul>
             `;
+
             // Wettericons für die nächsten 24 Stunden in 3-Stunden Schritten
             for (let i = 0; i <= 24; i += 3) {
-                let symbol = feature.properties.timeseries[i].data.next_1_hours.summary.symbol_code;
-                content += `<img src="icons/${symbol}.svg" alt="${symbol}" style="width:32px" title="${time.toLocaleString()}">`;
+                if (i < feature.properties.timeseries.length) {
+                    let forecastTime = new Date(feature.properties.timeseries[i].time);
+                    let symbol = feature.properties.timeseries[i].data.next_1_hours.summary.symbol_code;
+                    content += `<img src="icons/${symbol}.svg" alt="${symbol}" style="width:32px" title="${forecastTime.toLocaleString()}">`;
+                }
             }
 
             // Link zum Datendownload
@@ -85,35 +105,4 @@ map.fire("click", {
 // Überprüfen, ob der Punkt in Österreich liegt
 function isInAustria(latlng) {
     return latlng.lat >= austriaBounds[0][0] && latlng.lat <= austriaBounds[1][0] &&
-           latlng.lng >= austriaBounds[0][1] && latlng.lng <= austriaBounds[1][1];
-}
-
-// Windkarte
-async function loadWind(url) {
-    const response = await fetch(url);
-    const jsondata = await response.json();
-    console.log(jsondata);
-
-    L.velocityLayer({
-        data: jsondata,
-        lineWidth: 2,
-        displayOptions: {
-            directionString: "Windrichtung",
-            speedString: "Windgeschwindigkeit",
-            speedUnit: "km/h",
-            position: "bottomright",
-            velocityType: "",
-        }
-    }).addTo(themaLayer.wind);
-
-    // Vorhersagezeitpunkt ermitteln
-    let forecastDate = new Date(jsondata[0].header.refTime);
-    forecastDate.setHours(forecastDate.getHours() + jsondata[0].header.forecastTime);
-
-    document.querySelector("#forecast-date").innerHTML = `
-    (<a href="${url}" target="met.no">Stand ${forecastDate.toLocaleString()}</a>)
-    `;
-}
-
-// Beispielhafte Winddaten für Österreich laden (URL anpassen)
-loadWind("https://geographie.uibk.ac.at/data/ecmwf/data/wind-10u-10v-europe.json");
+           latlng.lng >=
