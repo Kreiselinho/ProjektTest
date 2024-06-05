@@ -15,36 +15,36 @@ let nationalParks = [
         name: "Nationalpark Neusiedler See - Seewinkel",
         lat: 47.773514,
         lng: 16.769231,
-        image: "https://upload.wikimedia.org/wikipedia/commons/3/3d/Neusiedler_See_-_Seewinkel.jpg",
-        credit: "By Thomas Ledl - Own work, CC BY-SA 3.0, https://commons.wikimedia.org/w/index.php?curid=20408732"
+        image: "images/seewinkel.jpg",
+        credit: "@echtzeitjohann https://pixabay.com/de/photos/rinderherde-burgenland-seewinkel-1203871/"
     },
     {
         name: "Nationalpark Gesäuse",
         lat: 47.569953,
         lng: 14.615875,
-        image: "https://upload.wikimedia.org/wikipedia/commons/8/8e/Ges%C3%A4use_Johnsbach_01.jpg",
-        credit: "By Uoaei1 - Own work, CC BY-SA 3.0, https://commons.wikimedia.org/w/index.php?curid=31282630"
+        image: "images/gesäuse.jpg",
+        credit: "@jplenio https://pixabay.com/de/photos/alpine-berge-sonnenuntergang-alpen-5630807/"
     },
     {
         name: "Nationalpark Thayatal",
         lat: 48.859317,
         lng: 15.898437,
-        image: "https://upload.wikimedia.org/wikipedia/commons/5/5b/Thayatal_2008_PD_018.JPG",
-        credit: "By Petr Dlouhý - Own work, CC BY-SA 3.0, https://commons.wikimedia.org/w/index.php?curid=5261295"
+        image: "/images/thaya.jpg",
+        credit: "@Neo98 https://pixabay.com/de/photos/natur-tschechien-podyji-nationalpark-3520727/"
     },
     {
         name: "Nationalpark Kalkalpen",
         lat: 47.805639,
         lng: 14.307364,
-        image: "https://upload.wikimedia.org/wikipedia/commons/2/2d/Kalkalpen_01.jpg",
-        credit: "By Peter Gugerell - Own work, CC0, https://commons.wikimedia.org/w/index.php?curid=34192072"
+        image: "images/kalkalpen.jpg",
+        credit: "@HF_AT https://pixabay.com/de/photos/dambergwarte-fog-foggy-foggy-forest-7566021/"
     },
     {
         name: "Nationalpark Donau-Auen",
         lat: 48.155263,
         lng: 16.816245,
-        image: "https://upload.wikimedia.org/wikipedia/commons/1/15/Donau_Auen_Nationalpark.jpg",
-        credit: "By GuentherZ - Own work, CC BY-SA 4.0, https://commons.wikimedia.org/w/index.php?curid=47158696"
+        image: "images/donauauen.jpg",
+        credit: "@Cs- https://pixabay.com/de/photos/danube-die-donau-donau-r%C3%BCckstau-2424063/"
     }
 ];
 
