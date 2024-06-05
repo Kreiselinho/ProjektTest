@@ -30,17 +30,18 @@ L.control.scale({
 
 // Leaflet Search Control
 let searchControl = new L.Control.Search({
-    url: 'https://nominatim.openstreetmap.org/search?format=json&q={s}',
-    jsonpParam: 'json_callback',
-    propertyName: 'display_name',
-    propertyLoc: ['lat', 'lon'],
-    marker: L.marker([0,0]),
-    autoCollapse: true,
-    autoType: false,
-    minLength: 2,
-    moveToLocation: function(latlng, title, map) {
-        map.setView(latlng, initialZoom);
-        showForecast(latlng.lat, latlng.lng);
+    layer: L.layerGroup(Object.values(themaLayer)),
+    initial: false,
+    zoom: 10,
+    marker: false,
+    textPlaceholder: "Suchen...",
+    moveToLocation: function(latlng) {
+        if (isInAustria(latlng)) {
+            map.setView(latlng, initialZoom);
+            showForecast(latlng.lat, latlng.lng);
+        } else {
+            alert("Bitte innerhalb Österreichs suchen.");
+        }
     }
 }).addTo(map);
 
@@ -105,4 +106,34 @@ map.fire("click", {
 // Überprüfen, ob der Punkt in Österreich liegt
 function isInAustria(latlng) {
     return latlng.lat >= austriaBounds[0][0] && latlng.lat <= austriaBounds[1][0] &&
-           latlng.lng >=
+           latlng.lng >= austriaBounds[0][1] && latlng.lng <= austriaBounds[1][1];
+}
+
+// Windkarte
+async function loadWind(url) {
+    const response = await fetch(url);
+    const jsondata = await response.json();
+    console.log(jsondata);
+    L.velocityLayer({
+        data: jsondata,
+        lineWidth: 2,
+        displayOptions: {
+            directionString: "Windrichtung",
+            speedString: "Windgeschwindigkeit",
+            speedUnit: "km/h",
+            position: "bottomright",
+            velocityType: "",
+        }
+    }).addTo(themaLayer.wind);
+
+    // Vorhersagezeitpunkt ermitteln
+    let forecastDate = new Date(jsondata[0].header.refTime);
+    forecastDate.setHours(forecastDate.getHours() + jsondata[0].header.forecastTime);
+
+    document.querySelector("#forecast-date").innerHTML = `
+    (<a href="${url}" target="met.no">Stand ${forecastDate.toLocaleString()}</a>)
+    `;
+}
+
+// Beispielhafte Winddaten für Österreich laden (URL anpassen)
+loadWind("https://geographie.uibk.ac.at/data/ecmwf/data/wind-10u-10v-europe.json");
