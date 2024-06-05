@@ -2,6 +2,17 @@ let austriaBounds = [[46.372276, 9.530952], [49.020608, 17.160776]]; // Bounding
 let mapCenter = [47.267222, 11.392778]; // Center the map on Innsbruck
 let initialZoom = 7;
 
+// Liste der Nationalparks in Österreich
+let nationalParks = [
+    { name: "Nationalpark Hohe Tauern", lat: 47.121201, lng: 12.713109 },
+    { name: "Nationalpark Neusiedler See - Seewinkel", lat: 47.773514, lng: 16.769231 },
+    { name: "Nationalpark Gesäuse", lat: 47.569953, lng: 14.615875 },
+    { name: "Nationalpark Thayatal", lat: 48.859317, lng: 15.898437 },
+    { name: "Nationalpark Kalkalpen", lat: 47.805639, lng: 14.307364 },
+    { name: "Nationalpark Donau-Auen", lat: 48.155263, lng: 16.816245 },
+    { name: "Nationalpark Hohe Wand", lat: 47.825059, lng: 16.056765 }
+];
+
 // Karte initialisieren
 let map = L.map("map", {
     fullscreenControl: true
@@ -10,7 +21,8 @@ let map = L.map("map", {
 // thematische Layer
 let themaLayer = {
     forecast: L.featureGroup().addTo(map),
-    wind: L.featureGroup().addTo(map)
+    wind: L.featureGroup().addTo(map),
+    parks: L.featureGroup().addTo(map)
 };
 
 // Hintergrundlayer
@@ -21,6 +33,7 @@ let layerControl = L.control.layers({
 }, {
     "Wettervorhersage MET Norway": themaLayer.forecast,
     "ECMWF Windvorhersage": themaLayer.wind,
+    "Nationalparks": themaLayer.parks
 }).addTo(map);
 
 // Maßstab
@@ -137,3 +150,9 @@ async function loadWind(url) {
 
 // Beispielhafte Winddaten für Österreich laden (URL anpassen)
 loadWind("https://geographie.uibk.ac.at/data/ecmwf/data/wind-10u-10v-europe.json");
+
+// Nationalparks Marker hinzufügen
+nationalParks.forEach(park => {
+    let marker = L.marker([park.lat, park.lng]).addTo(themaLayer.parks);
+    marker.bindPopup(`<b>${park.name}</b>`);
+});
