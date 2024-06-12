@@ -33,6 +33,7 @@ header nav {
 
 article {
     margin-top: 0.5em;
+    text-align: justify; /* Text im Blocksatz */
 }
 
 #map {
@@ -50,6 +51,7 @@ footer {
 footer nav {
     display: inline-block;
 }
+
 .popupContent h4 {
     margin-bottom: 10px;
 }

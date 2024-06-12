@@ -29,7 +29,7 @@ let nationalParks = [
         name: "Nationalpark Thayatal",
         lat: 48.859317,
         lng: 15.898437,
-        image: "/images/thaya.jpg",
+        image: "images/thaya.jpg",
         credit: "@Neo98 https://pixabay.com/de/photos/natur-tschechien-podyji-nationalpark-3520727/"
     },
     {
@@ -44,7 +44,7 @@ let nationalParks = [
         lat: 48.155263,
         lng: 16.816245,
         image: "images/donauauen.jpg",
-        credit: "@Cs- https://pixabay.com/de/photos/danube-die-donau-donau-r%C3%BCckstau-2424063/"
+        credit: "@Cs- https://pixabay.com/de/photos/danube-die-donau-donau-rückstau-2424063/"
     }
 ];
 
@@ -76,25 +76,39 @@ L.control.scale({
     imperial: false,
 }).addTo(map);
 
-// Leaflet Search Control
+// Nationalparks Marker hinzufügen
+nationalParks.forEach(park => {
+    let marker = L.marker([park.lat, park.lng]).addTo(themaLayer.parks);
+    let popupContent = `
+        <div class="popup-content">
+            <h4>${park.name}</h4>
+            <img src="${park.image}" alt="${park.name}" style="width:100%;"><br>
+            <small>Bildnachweis: <a href="${park.credit.split(', ')[2]}" target="_blank">${park.credit}</a></small>
+        </div>
+    `;
+    marker.bindPopup(popupContent);
+});
+
+// Leaflet Search Control nur für Nationalparks
 let searchControl = new L.Control.Search({
-    layer: L.layerGroup(Object.values(themaLayer)),
-    initial: false,
-    zoom: 10,
+    layer: themaLayer.parks,
+    propertyName: 'name',
+    zoom: 12,
     marker: false,
     textPlaceholder: "Suchen...",
-    moveToLocation: function(latlng) {
-        if (isInAustria(latlng)) {
-            map.setView(latlng, initialZoom);
-            showForecast(latlng.lat, latlng.lng);
-        } else {
-            alert("Bitte innerhalb Österreichs suchen.");
-        }
+    moveToLocation: function(latlng, title, map) {
+        map.setView(latlng, initialZoom);
+        let marker = new L.Marker(latlng).addTo(map).bindPopup(title).openPopup();
     }
 }).addTo(map);
 
 // Wettervorhersage MET Norway
 async function showForecast(lat, lon) {
+    if (!isInAustria({lat: lat, lng: lon})) {
+        alert("Bitte innerhalb Österreichs klicken.");
+        return;
+    }
+
     let url = `https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=${lat}&lon=${lon}`;
     let response = await fetch(url);
     let jsondata = await response.json();
@@ -112,7 +126,6 @@ async function showForecast(lat, lon) {
                 <li>Luftdruck Meereshöhe (hPa): ${details.air_pressure_at_sea_level}</li>
                 <li>Lufttemperatur (°C): ${details.air_temperature} </li>
                 <li>Bewölkungsgrad (%): ${details.cloud_area_fraction}</li>
-                <li>Niederschlagsmenge (mm): ${details.precipitation_amount}</li>
                 <li>Luftfeuchtigkeit(%): ${details.relative_humidity}</li>
                 <li>Windrichtung (°): ${details.wind_from_direction}</li>
                 <li>Windgeschwindigkeit (km/h): ${Math.round(details.wind_speed * 3.6)}</li>
@@ -144,11 +157,6 @@ map.on("click", function (evt) {
     } else {
         alert("Bitte innerhalb Österreichs klicken.");
     }
-});
-
-// Klick auf Innsbruck simulieren
-map.fire("click", {
-    latlng: mapCenter
 });
 
 // Überprüfen, ob der Punkt in Österreich liegt
@@ -185,16 +193,3 @@ async function loadWind(url) {
 
 // Beispielhafte Winddaten laden
 loadWind("https://geographie.uibk.ac.at/data/ecmwf/data/wind-10u-10v-europe.json");
-
-// Nationalparks Marker hinzufügen
-nationalParks.forEach(park => {
-    let marker = L.marker([park.lat, park.lng]).addTo(themaLayer.parks);
-    let popupContent = `
-        <div class="popup-content">
-            <h4>${park.name}</h4>
-            <img src="${park.image}" alt="${park.name}" style="width:100%;"><br>
-            <small>Bildnachweis: <a href="${park.credit.split(', ')[2]}" target="_blank">${park.credit}</a></small>
-        </div>
-    `;
-    marker.bindPopup(popupContent);
-});
