@@ -78,7 +78,8 @@ L.control.scale({
 
 // Nationalparks Marker hinzufügen
 nationalParks.forEach(park => {
-    let marker = L.marker([park.lat, park.lng]).addTo(themaLayer.parks);
+    let marker = L.marker([park.lat, park.lng], { title: park.name }).addTo(themaLayer.parks);
+    marker.name = park.name;
     let popupContent = `
         <div class="popup-content">
             <h4>${park.name}</h4>
@@ -89,7 +90,7 @@ nationalParks.forEach(park => {
     marker.bindPopup(popupContent);
 });
 
-// Leaflet Search Control nur für Nationalparks
+// Leaflet Search Control für Nationalparks
 let searchControl = new L.Control.Search({
     layer: themaLayer.parks,
     propertyName: 'name',
@@ -98,7 +99,7 @@ let searchControl = new L.Control.Search({
     textPlaceholder: "Suchen...",
     moveToLocation: function(latlng, title, map) {
         map.setView(latlng, initialZoom);
-        let marker = new L.Marker(latlng).addTo(map).bindPopup(title).openPopup();
+        let marker = L.marker(latlng).addTo(map).bindPopup(title).openPopup();
     }
 }).addTo(map);
 
